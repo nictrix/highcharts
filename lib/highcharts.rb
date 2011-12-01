@@ -59,16 +59,16 @@ module Highcharts
 		end
 
 		def self.difference_between_two_dates(start_time,end_time,x_axis)
-			x_axis = Chart.transform_x_axis(x_axis)
+			x_axis = Highcharts::Charting.transform_x_axis(x_axis)
 
 			return ((Date.strptime(end_time) - Date.strptime(start_time)) / x_axis).to_i
 		end
 
 		def self.create_array_of_dates(start_time,end_time,x_axis)
 			old_x_axis = x_axis
-			x_axis = Chart.transform_x_axis(x_axis)
+			x_axis = Highcharts::Charting.transform_x_axis(x_axis)
 
-			x_amount = Chart.difference_between_two_dates(start_time,end_time,x_axis)
+			x_amount = Highcharts::Charting.difference_between_two_dates(start_time,end_time,x_axis)
 
 			categories = Array.new
 			categories << Time.parse(start_time+" 00:00:00")
