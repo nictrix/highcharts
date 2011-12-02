@@ -45,6 +45,7 @@ module Highcharts
 			return hc_hash
 		end
 
+		#Need to fix this to include hours also
 		def self.transform_x_axis(x_axis)
 			case x_axis
 			when 'month'
@@ -64,6 +65,7 @@ module Highcharts
 			return ((Date.strptime(end_time) - Date.strptime(start_time)) / x_axis).to_i
 		end
 
+		#Need to fix this to include hours also
 		def self.create_array_of_dates(start_time,end_time,x_axis)
 			old_x_axis = x_axis
 			x_axis = Highcharts::Charting.transform_x_axis(x_axis)
