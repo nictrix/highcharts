@@ -29,42 +29,45 @@ module Highcharts
 			return [ "line", "spline", "area", "areaspline", "column", "bar", "pie", "scatter" ]
 		end
 
-		#Make this call more dynamic, iterate over all known attributes
 		def to_hc
 			hc_hash = {}
 
-			hc_hash.store(:categories,@categories)
-			hc_hash.store(:drilldown,@drilldown)
-			hc_hash.store(:start,@start)
-			hc_hash.store(:end,@end)
-			hc_hash.store(:maximum,@maximum)
-			hc_hash.store(:minimum,@minimum)
-			hc_hash.store(:series,@series)
-			hc_hash.store(:sla,@sla)
-			hc_hash.store(:style,@style)
-			hc_hash.store(:subtitle,@subtitle)
-			hc_hash.store(:title,@title)
-			hc_hash.store(:x,@x)
-			hc_hash.store(:y,@y)
-			hc_hash.store(:color,@color)
+			self.instance_variables.each do |variable|
+				v = variable.to_s[1,variable.length]
+				hc_hash.store(v,self.send(v))
+			end
 
 			return hc_hash
 		end
 
-		def self.create_array_of_dates(start_time,end_time,x_axis)
-			categories = IceCube::Schedule.new #Add on from IRB window
+		def create_array_of_dates
+			all_dates = IceCube::Schedule.new(Time.parse(@start), :end_time => Time.parse(@end))
 
-			return categories
-		end
-
-		#Depending on what the x axis is, this should conform to it
-		def fix_categories
-			x = []
-			@categories.each do |category|
-				x << category.strftime("%m-%d")
+			case @x
+			when "month"
+				all_dates.add_recurrence_rule IceCube::Rule.monthly
+				rule = "%m-%Y"
+			when "week"
+				all_dates.add_recurrence_rule IceCube::Rule.weekly
+				rule = "%m-%d"
+			when "day"
+				all_dates.add_recurrence_rule IceCube::Rule.daily
+				rule = "%m-%d"
+			when "hour"
+				all_dates.add_recurrence_rule IceCube::Rule.hourly
+				rule = "%I%p"
+			when "minute"
+				all_dates.add_recurrence_rule IceCube::Rule.minutely
+				rule = "%I:%M%p"
+			when "second"
+				all_dates.add_recurrence_rule IceCube::Rule.secondly
+				rule = "%I:%M:%S%p"
 			end
 
-			@categories = x
+			all_dates.all_occurrences.each do |date|
+				@categories << date.strftime(rule)
+			end
+
 		end
 	end
 end
