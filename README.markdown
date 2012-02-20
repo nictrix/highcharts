@@ -4,21 +4,21 @@ Highcharts Gem to allow for easily extending other classes in your application t
 
 ## Installation
 
-  gem install highcharts
+	gem install highcharts
 
 ## Using
 
 do an include in your class, example below:
 
-		class Object
-			include Highcharts::Charting
-		end
+	class Object
+		include Highcharts::Charting
+	end
 
 you can call a couple other methods:
 
-		Object.new.x_choices (all possible choices this gem can provide)
-		Object.new.style_choices (all possible style choices highcharts provides)
-		Object.new.humanize_categories (provides human readable category labels for datetimes)
+	Object.new.x_choices (all possible choices this gem can provide)
+	Object.new.style_choices (all possible style choices highcharts provides)
+	Object.new.humanize_categories (provides human readable category labels for datetimes)
 
 ## Roadmap
 
