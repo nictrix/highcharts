@@ -10,9 +10,9 @@ Highcharts Gem to allow for easily extending other classes in your application t
 
 do an include in your class, example below:
 
-    class Object
-      include Highcharts::Charting
-    end
+		class Object
+			include Highcharts::Charting
+		end
 
 you can call a couple other methods:
 
