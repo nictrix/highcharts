@@ -10,7 +10,7 @@ module Highcharts
 
 		def initialize(user_supplied_hash={})
 			standard_hash = { title:"", subtitle:"", drilldown:"", start:"", end:"", style:"",
-				x:"", y:"", maximum:"", minimum:"", sla:0, series:[], categories:[] }
+				x:"", y:"", maximum:"", minimum:"", sla:0, series:[], categories:[], color:"" }
 
 			user_supplied_hash = standard_hash.merge(user_supplied_hash)
 
@@ -21,11 +21,11 @@ module Highcharts
 			end
 		end
 
-		def self.get_x_axis_choices
+		def self.x_choices
 			return [ "year", "month", "week", "day", "hour", "minute", "second" ]
 		end
 
-		def self.get_style_choices
+		def self.style_choices
 			return [ "line", "spline", "area", "areaspline", "column", "bar", "pie", "scatter" ]
 		end
 
@@ -43,31 +43,45 @@ module Highcharts
 		def create_array_of_dates
 			all_dates = IceCube::Schedule.new(Time.parse(@start), :end_time => Time.parse(@end))
 
-			case @x
-			when "month"
-				all_dates.add_recurrence_rule IceCube::Rule.monthly
-				rule = "%m-%Y"
-			when "week"
-				all_dates.add_recurrence_rule IceCube::Rule.weekly
-				rule = "%m-%d"
-			when "day"
-				all_dates.add_recurrence_rule IceCube::Rule.daily
-				rule = "%m-%d"
-			when "hour"
-				all_dates.add_recurrence_rule IceCube::Rule.hourly
-				rule = "%I%p"
-			when "minute"
-				all_dates.add_recurrence_rule IceCube::Rule.minutely
-				rule = "%I:%M%p"
-			when "second"
-				all_dates.add_recurrence_rule IceCube::Rule.secondly
-				rule = "%I:%M:%S%p"
+			rule = case @x
+							when "month"
+								IceCube::Rule.monthly
+							when "week"
+								IceCube::Rule.weekly
+							when "day"
+								IceCube::Rule.daily
+							when "hour"
+								IceCube::Rule.hourly
+							when "minute"
+								IceCube::Rule.minutely
+							when "second"
+								IceCube::Rule.secondly
+							end
+
+			all_dates.add_recurrence_rule rule
+			@categories = all_dates.all_occurrences
+		end
+
+		def humanize_categories
+			label = case @x
+							when "month"
+								"%m-%Y"
+							when "week", "day"
+								"%m-%d"
+							when "hour"
+								"%I%p"
+							when "minute"
+								"%I:%M%p"
+							when "second"
+								"%I:%M:%S%p"
+							end
+
+			temp_categories = []
+			@categories.each do |date|
+				temp_categories << date.strftime(label)
 			end
 
-			all_dates.all_occurrences.each do |date|
-				@categories << date.strftime(rule)
-			end
-
+			@categories = temp_categories
 		end
 	end
 end

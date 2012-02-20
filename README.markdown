@@ -1,6 +1,6 @@
 ## Information
 
-Highcharts Gem to allow for easily extending other classes in your application to create highchart's json
+Highcharts Gem to allow for easily extending other classes in your application to create highchart's json.  Highcharts the javascript library is located here: http://www.highcharts.com/ (this library is not affiliated with Highcharts in anyway, it helps ruby developers use the Highcharts javascript library)
 
 ## Installation
 
@@ -8,16 +8,20 @@ Highcharts Gem to allow for easily extending other classes in your application t
 
 ## Using
 
-do a include in your class, example below:
+do an include in your class, example below:
 
     class Object
       include Highcharts::Charting
     end
 
+you can call a couple other methods:
+
+		Object.new.x_choices (all possible choices this gem can provide)
+		Object.new.style_choices (all possible style choices highcharts provides)
+		Object.new.humanize_categories (provides human readable category labels for datetimes)
+
 ## Roadmap
 
-- Use https://github.com/seejohnrun/ice_cube for times
-- Make the to_hc method more dynamic (don't call each attribute manually)
 - Give examples of html forms
 - Give examples of javascript functions
 - Provide function to include highcharts javascript automatically at any version within html
