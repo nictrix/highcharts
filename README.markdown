@@ -14,6 +14,15 @@ do a include in your class, example below:
       include Highcharts::Charting
     end
 
+## Roadmap
+
+- Use https://github.com/seejohnrun/ice_cube for times
+- Make the to_hc method more dynamic (don't call each attribute manually)
+- Give examples of html forms
+- Give examples of javascript functions
+- Provide function to include highcharts javascript automatically at any version within html
+- Provide function to include javascript functions for this data model automatically
+
 ## Contributing
 
 - Fork the project and do your work in a topic branch.

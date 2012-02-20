@@ -1,12 +1,16 @@
 require "highcharts/version"
 
+require 'ice_cube'
+require 'time'
+require 'date'
+
 module Highcharts
 	module Charting
-		attr_accessor :title, :subtitle, :drilldown, :start, :end, :style, :x, :y, :maximum, :minimum, :sla, :series, :categories
+		attr_accessor :title, :subtitle, :drilldown, :start, :end, :style, :x, :y, :maximum, :minimum, :sla, :series, :categories, :color
 
 		def initialize(user_supplied_hash={})
 			standard_hash = { title:"", subtitle:"", drilldown:"", start:"", end:"", style:"",
-				x:"", y:"", maximum:"", minimum:"", sla:9999999, series:[], categories:[] }
+				x:"", y:"", maximum:"", minimum:"", sla:0, series:[], categories:[] }
 
 			user_supplied_hash = standard_hash.merge(user_supplied_hash)
 
@@ -18,13 +22,14 @@ module Highcharts
 		end
 
 		def self.get_x_axis_choices
-			return [ "month", "week", "day" ]
+			return [ "year", "month", "week", "day", "hour", "minute", "second" ]
 		end
 
 		def self.get_style_choices
 			return [ "line", "spline", "area", "areaspline", "column", "bar", "pie", "scatter" ]
 		end
 
+		#Make this call more dynamic, iterate over all known attributes
 		def to_hc
 			hc_hash = {}
 
@@ -41,50 +46,18 @@ module Highcharts
 			hc_hash.store(:title,@title)
 			hc_hash.store(:x,@x)
 			hc_hash.store(:y,@y)
+			hc_hash.store(:color,@color)
 
 			return hc_hash
 		end
 
-		#Need to fix this to include hours also
-		def self.transform_x_axis(x_axis)
-			case x_axis
-			when 'month'
-				return 31
-			when 'week'
-				return 7
-			when 'day'
-				return 1
-			else
-				return x_axis
-			end
-		end
-
-		def self.difference_between_two_dates(start_time,end_time,x_axis)
-			x_axis = Highcharts::Charting.transform_x_axis(x_axis)
-
-			return ((Date.strptime(end_time) - Date.strptime(start_time)) / x_axis).to_i
-		end
-
-		#Need to fix this to include hours also
 		def self.create_array_of_dates(start_time,end_time,x_axis)
-			old_x_axis = x_axis
-			x_axis = Highcharts::Charting.transform_x_axis(x_axis)
-
-			x_amount = Highcharts::Charting.difference_between_two_dates(start_time,end_time,x_axis)
-
-			categories = Array.new
-			categories << Time.parse(start_time+" 00:00:00")
-			for range in 1..x_amount
-				if old_x_axis == "month"
-					categories << Time.parse(start_time+" 00:00:00") + range.month
-				else
-					categories << Time.parse(start_time+" 00:00:00") + (x_axis * range).days
-				end
-			end
+			categories = IceCube::Schedule.new #Add on from IRB window
 
 			return categories
 		end
 
+		#Depending on what the x axis is, this should conform to it
 		def fix_categories
 			x = []
 			@categories.each do |category|
